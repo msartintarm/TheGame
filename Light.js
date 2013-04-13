@@ -11,7 +11,7 @@ Light.prototype.draw = function(gl_, shader_) {
 
     theMatrix.push();
     theMatrix.mul(theMatrix.vMatrix);
-    theMatrix.mul(lightMatrix);
+    theMatrix.mul(theMatrix.lightMatrix);
     this.o.draw(gl_, shader_);
     theMatrix.pop();
 }
