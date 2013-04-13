@@ -29,13 +29,22 @@ function GLcanvas() {
     pause = new booleanData("pause");
     stoolHeight = new MatrixData("stoolHeight");
     priveledgedMode = new booleanData("priveledgedStats");
+
+    return this;
 }
 
-GLcanvas.prototype.add = function(objToDraw) {
-    theMatrix.viewInit();
-    this.objects = [];
-    priveledgedMode.reset();
-    mazeMode = 0;
+/**
+   Debug mode for the canvas. Currently calls a stool.
+**/
+GLcanvas.prototype.debug = function() {
+    if (envDEBUG == false) { return; }
+    expand('title2', 'webgl_object'); 
+    this.start('shadow');
+
+    return this;
+}
+
+GLcanvas.prototype.createScene = function(objToDraw) {
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
     } else if(objToDraw == "sphere") {
@@ -44,9 +53,10 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Skybox());
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
-    } else if(objToDraw == "shadow") {
+    } else if(objToDraw == "game") {
 	this.objects.push(new MazePiece(5, NO_LEFT, TILE_TEXTURE));
 	this.objects.push(new Stool());
+	this.objects.push(new IsoFloor());
     } else if(objToDraw == "maze") {
 	myMaze = new Maze();
 	this.objects.push(myMaze);
@@ -83,7 +93,7 @@ GLcanvas.prototype.drawModels = function() {
 /**
  * Begins the canvas.
  */
-GLcanvas.prototype.start = function(objToDraw) {
+GLcanvas.prototype.start = function(theScene) {
     if (this.gl == null) {
 	// One-time display methods
 	this.canvas.style.display = "inline-block";
@@ -95,9 +105,14 @@ GLcanvas.prototype.start = function(objToDraw) {
 	this.initFramebuffers();
 	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shaders);
-	
+
+	theMatrix.viewInit();
+	this.objects = [];
+	priveledgedMode.reset();
+	mazeMode = 0;
+
 	// Instantiate models
-	this.add(objToDraw);
+	this.createScene(theScene);
 	this.bufferModels();
 
 	// Set background color, clear everything, and
@@ -115,7 +130,7 @@ GLcanvas.prototype.start = function(objToDraw) {
     } else {
 	// If we have started GL already, 
 	//  just add the new model.
-	this.add(objToDraw);
+	this.createScene(theScene);
 	this.bufferModels();
     }
 }

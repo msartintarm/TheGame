@@ -88,6 +88,11 @@ function _oTranslate(vec_) {
     return this;
 }
 
+function _oScale(vec_) {
+    this.o.scale(vec_);
+    return this;
+}
+
 function _oInvertNorms() {
     for(var i = 0; i < this.o.normData.length; ++i) {
 	this.o.normData[i] = -this.o.normData[i];
@@ -334,6 +339,8 @@ function handleMouseMove(event) {
 var wrongKey = false;
 var lightWillRotate = false;
 
+const envISO = true;
+
 function handleKeyDown(theEvent) {
 
     if(wrongKey) {
@@ -361,24 +368,33 @@ function handleKeyDown(theEvent) {
 	    "Jump!";
 	break;
     case 39: // ->
-	theMatrix.moveLeft();
+	theMatrix.vTranslate([moveDist, 0, 0]); 
+	// theMatrix.moveLeft();
 	document.getElementById("keyboard").innerHTML = 
 	    "Jump!";
 	break;
     case 37: // left
+//	theMatrix.vTranslate([-moveDist, 0, 0]); 
 	theMatrix.moveRight();
 	break;
     case 38: // up
-	theMatrix.moveForward();
+    if(envISO) break;
+    theMatrix.vTranslate([0, 0, -moveDist]); 
+//	theMatrix.moveForward();
 	break;
     case 40: // down
-	theMatrix.moveBack();
+    theMatrix.vTranslate([0, 0, moveDist]); 
+//	theMatrix.moveBack();
 	break;
     case 65: // a
-	theMatrix.lookLeft();
+    theMatrix.vRotate(lookDist * 2 * Math.PI, 
+		 [ 0, 1, 0]);
+//	theMatrix.lookLeft();
 	break;
     case 68: // d
-	theMatrix.lookRight();
+    theMatrix.vRotate(lookDist * 2 * Math.PI, 
+		 [ 0,-1, 0]);
+//	theMatrix.lookRight();
 	break;	
     case 73: // i
 	if(priveledgedMode.val)
